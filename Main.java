@@ -1,64 +1,44 @@
 package com.metanit;
 
-interface HighestVoltageConnection {
-    void Charge();
-    void HighCharge();
-}
-
-interface LowVoltageConnection {
-    void Charge();
-    void LowCharge();
-}
-
-class HighVoltage implements HighestVoltageConnection {
-    public void Charge(){
-        System.out.println("The phone is connected to charging:");
-    }
-    public void HighCharge(){
-        System.out.println("\t" + "(Socket power 380 Volts)" + "\n");
-    }
-}
-
-class LowVoltage implements LowVoltageConnection {
-    public void Charge(){
-        System.out.println("The phone is connected to charging:");
-    }
-    public void LowCharge(){
-        System.out.println("\t" + "(Socket power 220 Volts)");
-    }
-}
-
-class SocketPower {
-    private HighestVoltageConnection highConnection;
-    public SocketPower(HighestVoltageConnection highConnection){
-        this.highConnection = highConnection;
-    }
-    public void Connect(){
-        highConnection.Charge();
-        highConnection.HighCharge();
-    }
-}
-
-class SocketPowerAdapter implements HighestVoltageConnection {
-    LowVoltageConnection lowVoltageConnection;
-    public SocketPowerAdapter(LowVoltageConnection lowConnection){
-        this.lowVoltageConnection = lowConnection;
-    }
-    public void Charge(){
-        lowVoltageConnection.Charge();
-    }
-    public void HighCharge(){
-        lowVoltageConnection.LowCharge();
-    }
-}
-
 public class Main {
+    interface HighConnect {
+        void HighPower(); 
+    }
+
+    interface LowConnect {
+        void LowPower();
+    }
+    static class Lowclass implements LowConnect {
+        @Override
+        public void LowPower() {
+            System.out.println("220w ");
+        }
+    }
+
+    static class Highclass implements HighConnect {
+        @Override
+        public void HighPower() {
+            System.out.println("заряжает 380w");
+        }
+    }
+    static class adapter implements LowConnect {
+        private HighConnect charge;
+        public adapter(HighConnect charge){
+            this.charge = charge;
+        }
+        public void tt(){
+            charge.HighPower();
+        }
+        @Override
+        public void LowPower() {
+            System.out.println("заряжает 220w");
+        }
+    }
     public static void main(String[] args) {
-        HighVoltage highVoltage = new HighVoltage();
-        SocketPower highPower = new SocketPower(highVoltage);
-        highPower.Connect();
-        SocketPowerAdapter socketPowerAdapter = new SocketPowerAdapter(new LowVoltage());
-        SocketPower socketLowPower = new SocketPower(socketPowerAdapter);
-        socketLowPower.Connect();
+        Lowclass low = new Lowclass();
+        Highclass hidh = new Highclass();
+        adapter adap = new adapter(hidh);
+        adap.LowPower();
+        adap.tt();
     }
 }
